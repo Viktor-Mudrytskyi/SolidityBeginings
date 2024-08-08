@@ -10,11 +10,12 @@ async function main() {
     if (!process.env.PRIVATE_KEY) {
         throw new Error("PRIVATE_KEY environment variable is not defined");
     }
-    if (!process.env.PRIVATE_KEY_PASSWORD) {
-        throw new Error("PRIVATE_KEY environment variable is not defined");
-    }
+
     if (!process.env.RPC_URL) {
         throw new Error("RPC_URL environment variable is not defined");
+    }
+    if (!process.env.ADDRESS) {
+        throw new Error("ADDRESS environment variable is not defined");
     }
 
     const provider = new ethers.JsonRpcProvider(process.env.RPC_URL);
@@ -40,13 +41,6 @@ async function main() {
     await deploySimpleStorage(wallet, abi, binary);
     // await makeRawTransaction();
 }
-
-main()
-    .then(() => process.exit(0))
-    .catch((error) => {
-        console.error(error);
-        process.exit(1);
-    });
 
 async function makeRawTransaction(wallet: ethers.Wallet): Promise<void> {
     const nonce = await wallet.getNonce();
@@ -96,7 +90,7 @@ async function deploySimpleStorage(
 
     const storeFunction = await contract.getFunction("store");
 
-    // Shoul pass Strings
+    // Should pass Strings
     const trxResponse = await storeFunction("7");
     console.log(trxResponse);
     const trxReceipt = await trxResponse.wait(1);
@@ -105,10 +99,9 @@ async function deploySimpleStorage(
     console.log(`Current fav number: ${updatedFavoriteNumber}`);
 }
 
-async function deploySimpleStorageToTestnet(
-    wallet: ethers.Wallet,
-    abi: string,
-    binary: string,
-): Promise<void> {}
-
-// 0x4B006E4B3401541CbBF93256E8958900cf29aa2a
+main()
+    .then(() => process.exit(0))
+    .catch((error) => {
+        console.error(error);
+        process.exit(1);
+    });
